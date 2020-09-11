@@ -27,3 +27,8 @@ to run image from docker hub: `docker run yevhenlieposhkin/event-service`
 link to the swagger: http://localhost:8080/swagger-ui.html
 
 link to the swagger if run with `docker-entrypoint.sh` : http://localhost:7080/swagger-ui.html
+
+### SonarQube
+command to run sonar from docker: `docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube:latest`
+
+command to run code check: `mvn sonar:sonar -Dsonar.projectKey=event-service -Dsonar.host.url=http://<your-ip> -Dsonar.login=<key>`

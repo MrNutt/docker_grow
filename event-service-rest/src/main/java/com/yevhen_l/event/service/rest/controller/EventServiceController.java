@@ -5,8 +5,9 @@ import com.yevhen_l.event.service.EventService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/docker-api/event-service")
@@ -16,31 +17,25 @@ public class EventServiceController {
     @Autowired
     private EventService eventService;
 
-    @RequestMapping(
-            method = RequestMethod.POST,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @PostMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(
             response = Event.class,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE,
             value = "Create Event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Event created", response = Event.class),
             @ApiResponse(code = 500, message = "Internal error")
     })
     public @ResponseBody
-    ResponseEntity createEvent(@RequestBody Event event) {
+    ResponseEntity<Event> createEvent(@RequestBody Event event) {
         Event newEvent = eventService.createEvent(event);
         return ResponseEntity.ok(newEvent);
     }
 
-    @RequestMapping(
-            path = "{id}",
-            method = RequestMethod.GET,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE
-    )
+    @GetMapping(path = "{id}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(
             response = Event.class,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE,
             value = "Get Event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Event returned", response = Event.class),
@@ -48,10 +43,10 @@ public class EventServiceController {
             @ApiResponse(code = 500, message = "Internal error")
     })
     public @ResponseBody
-    ResponseEntity getEvent(@ApiParam(name = "id", value = "Event id value", example = "1")
-                            @PathVariable(name = "id") Long id) {
+    ResponseEntity<Event> getEvent(@ApiParam(name = "id", value = "Event id value", example = "1")
+                                   @PathVariable(name = "id") Long id) {
         Event event = eventService.getEvent(id);
-        ResponseEntity responseEntity;
+        ResponseEntity<Event> responseEntity;
         if (null != event) {
             responseEntity = ResponseEntity.ok(event);
         } else {
@@ -61,13 +56,9 @@ public class EventServiceController {
         return responseEntity;
     }
 
-
-    @RequestMapping(
-            path = "{id}",
-            method = RequestMethod.PUT,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "{id}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(response = Event.class,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE,
             value = "Update Event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Event updated", response = Event.class),
@@ -75,10 +66,10 @@ public class EventServiceController {
             @ApiResponse(code = 500, message = "Internal error")
     })
     public @ResponseBody
-    ResponseEntity updateEvent(@ApiParam(name = "id", value = "event id", example = "1")
-                               @PathVariable(name = "id") Long id, @RequestBody Event event) {
+    ResponseEntity<Event> updateEvent(@ApiParam(name = "id", value = "event id", example = "1")
+                                      @PathVariable(name = "id") Long id, @RequestBody Event event) {
         Event existingEvent = eventService.getEvent(id);
-        ResponseEntity responseEntity;
+        ResponseEntity<Event> responseEntity;
         if (null != existingEvent) {
             Event updatedEvent = eventService.updateEvent(id, event);
             responseEntity = ResponseEntity.ok(updatedEvent);
@@ -88,9 +79,9 @@ public class EventServiceController {
         return responseEntity;
     }
 
-    @DeleteMapping(path = "{id}", produces = MimeTypeUtils.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "{id}", produces = APPLICATION_JSON_VALUE)
     @ApiOperation(response = Event.class,
-            produces = MimeTypeUtils.APPLICATION_JSON_VALUE,
+            produces = APPLICATION_JSON_VALUE,
             value = "Delete Event")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Event deleted", response = Event.class),
@@ -98,10 +89,10 @@ public class EventServiceController {
             @ApiResponse(code = 500, message = "Internal error")
     })
     public @ResponseBody
-    ResponseEntity deleteEvent(@ApiParam(name = "id", value = "event id", example = "1")
-                               @PathVariable(name = "id") Long id) {
+    ResponseEntity<Event> deleteEvent(@ApiParam(name = "id", value = "event id", example = "1")
+                                      @PathVariable(name = "id") Long id) {
         Event existingEvent = eventService.getEvent(id);
-        ResponseEntity responseEntity;
+        ResponseEntity<Event> responseEntity;
         if (null != existingEvent) {
             eventService.deleteEvent(id);
             responseEntity = ResponseEntity.ok(existingEvent);
