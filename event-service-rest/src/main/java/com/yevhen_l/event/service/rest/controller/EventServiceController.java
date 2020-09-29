@@ -1,8 +1,10 @@
 package com.yevhen_l.event.service.rest.controller;
 
 import com.yevhen_l.event.service.Event;
+import com.yevhen_l.event.service.EventDto;
 import com.yevhen_l.event.service.EventService;
 import io.swagger.annotations.*;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,8 @@ public class EventServiceController {
     @Autowired
     private EventService eventService;
 
+    private final ModelMapper mapper = new ModelMapper();
+
     @PostMapping(produces = APPLICATION_JSON_VALUE)
     @ApiOperation(
             response = Event.class,
@@ -27,7 +31,8 @@ public class EventServiceController {
             @ApiResponse(code = 500, message = "Internal error")
     })
     public @ResponseBody
-    ResponseEntity<Event> createEvent(@RequestBody Event event) {
+    ResponseEntity<Event> createEvent(@RequestBody EventDto eventDto) {
+        Event event = mapper.map(eventDto, Event.class);
         Event newEvent = eventService.createEvent(event);
         return ResponseEntity.ok(newEvent);
     }
@@ -67,10 +72,11 @@ public class EventServiceController {
     })
     public @ResponseBody
     ResponseEntity<Event> updateEvent(@ApiParam(name = "id", value = "event id", example = "1")
-                                      @PathVariable(name = "id") Long id, @RequestBody Event event) {
+                                      @PathVariable(name = "id") Long id, @RequestBody EventDto eventDto) {
         Event existingEvent = eventService.getEvent(id);
         ResponseEntity<Event> responseEntity;
         if (null != existingEvent) {
+            Event event = mapper.map(eventDto, Event.class);
             Event updatedEvent = eventService.updateEvent(id, event);
             responseEntity = ResponseEntity.ok(updatedEvent);
         } else {
